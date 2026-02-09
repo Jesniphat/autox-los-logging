@@ -1,0 +1,110 @@
+{
+  "groups": [
+    {
+      "name": "logging.structured",
+      "type": "com.jnp.logging.config.LoggingProperties",
+      "sourceType": "com.jnp.logging.config.LoggingProperties",
+      "description": "Structured logging configuration properties"
+    },
+    {
+      "name": "logging.structured.request",
+      "type": "com.jnp.logging.config.LoggingProperties$RequestLoggingConfig",
+      "sourceType": "com.jnp.logging.config.LoggingProperties",
+      "description": "Request logging configuration"
+    },
+    {
+      "name": "logging.structured.application",
+      "type": "com.jnp.logging.config.LoggingProperties$ApplicationLoggingConfig",
+      "sourceType": "com.jnp.logging.config.LoggingProperties",
+      "description": "Application logging configuration"
+    }
+  ],
+  "properties": [
+    {
+      "name": "logging.structured.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable or disable structured logging library",
+      "defaultValue": true
+    },
+    {
+      "name": "logging.structured.application-name",
+      "type": "java.lang.String",
+      "description": "Application name to include in logs. Defaults to spring.application.name"
+    },
+    {
+      "name": "logging.structured.request.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable request logging",
+      "defaultValue": true
+    },
+    {
+      "name": "logging.structured.request.log-headers",
+      "type": "java.lang.Boolean",
+      "description": "Log request/response headers",
+      "defaultValue": true
+    },
+    {
+      "name": "logging.structured.request.log-body",
+      "type": "java.lang.Boolean",
+      "description": "Log request body",
+      "defaultValue": true
+    },
+    {
+      "name": "logging.structured.request.log-response-body",
+      "type": "java.lang.Boolean",
+      "description": "Log response body",
+      "defaultValue": true
+    },
+    {
+      "name": "logging.structured.request.max-body-size",
+      "type": "java.lang.Integer",
+      "description": "Maximum body size to log in bytes",
+      "defaultValue": 10240
+    },
+    {
+      "name": "logging.structured.request.exclude-patterns",
+      "type": "java.util.List<java.lang.String>",
+      "description": "URL patterns to exclude from request logging"
+    },
+    {
+      "name": "logging.structured.request.include-patterns",
+      "type": "java.util.List<java.lang.String>",
+      "description": "URL patterns to include for request logging"
+    },
+    {
+      "name": "logging.structured.application.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable application logging",
+      "defaultValue": true
+    },
+    {
+      "name": "logging.structured.application.include-stack-trace",
+      "type": "java.lang.Boolean",
+      "description": "Include stack trace in error logs",
+      "defaultValue": true
+    },
+    {
+      "name": "logging.structured.application.max-stack-trace-depth",
+      "type": "java.lang.Integer",
+      "description": "Maximum stack trace depth",
+      "defaultValue": 50
+    },
+    {
+      "name": "logging.structured.masked-headers",
+      "type": "java.util.List<java.lang.String>",
+      "description": "Headers to mask in logs for security"
+    },
+    {
+      "name": "logging.structured.masked-fields",
+      "type": "java.util.List<java.lang.String>",
+      "description": "Fields to mask in request/response body"
+    },
+    {
+      "name": "logging.structured.mask-value",
+      "type": "java.lang.String",
+      "description": "Value to use when masking sensitive data",
+      "defaultValue": "***MASKED***"
+    }
+  ],
+  "hints": []
+}
