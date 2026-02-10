@@ -1,4 +1,4 @@
-# JNP Spring Logs - Starter
+# Spring Structured Logs - Starter
 
 This module provides the main Spring Boot Starter functionality for structured JSON logging.
 
@@ -19,10 +19,10 @@ com.jnp.logging
 
 ## Main Components
 
-### JnpLoggerFactory
-Factory for creating `JnpLogger` instances. Inject this bean to get loggers.
+### AppLoggerFactory
+Factory for creating `AppLogger` instances. Inject this bean to get loggers.
 
-### JnpLogger
+### AppLogger
 Main logger class with methods for both application and request logging.
 
 ### RequestLoggingFilter
@@ -37,5 +37,5 @@ Exchange filter for logging outgoing WebClient calls.
 ### CorrelationContext
 ThreadLocal-based correlation ID management.
 
-### JnpJsonEncoder
+### JsonLogEncoder
 Custom Logback encoder for JSON output format.
