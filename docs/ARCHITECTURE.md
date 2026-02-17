@@ -1,11 +1,11 @@
-# Spring Structured Logs - Starter
+# AutoX LOS Logging - Architecture
 
 This module provides the main Spring Boot Starter functionality for structured JSON logging.
 
 ## Package Structure
 
 ```
-com.jnp.logging
+th.co.autox.logging
 ├── autoconfigure/          # Spring Boot Auto-configuration
 ├── config/                 # Configuration properties
 ├── context/                # Correlation ID and log context

@@ -2,20 +2,20 @@
   "groups": [
     {
       "name": "logging.structured",
-      "type": "com.jnp.logging.config.LoggingProperties",
-      "sourceType": "com.jnp.logging.config.LoggingProperties",
+      "type": "th.co.autox.logging.config.LoggingProperties",
+      "sourceType": "th.co.autox.logging.config.LoggingProperties",
       "description": "Structured logging configuration properties"
     },
     {
       "name": "logging.structured.request",
-      "type": "com.jnp.logging.config.LoggingProperties$RequestLoggingConfig",
-      "sourceType": "com.jnp.logging.config.LoggingProperties",
+      "type": "th.co.autox.logging.config.LoggingProperties$RequestLoggingConfig",
+      "sourceType": "th.co.autox.logging.config.LoggingProperties",
       "description": "Request logging configuration"
     },
     {
       "name": "logging.structured.application",
-      "type": "com.jnp.logging.config.LoggingProperties$ApplicationLoggingConfig",
-      "sourceType": "com.jnp.logging.config.LoggingProperties",
+      "type": "th.co.autox.logging.config.LoggingProperties$ApplicationLoggingConfig",
+      "sourceType": "th.co.autox.logging.config.LoggingProperties",
       "description": "Application logging configuration"
     }
   ],

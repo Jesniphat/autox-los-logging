@@ -1,4 +1,4 @@
-# Spring Structured Logging
+# AutoX LOS Logging
 
 A Spring Boot Starter library for structured JSON logging with two main log types: **request** and **application**.
 
@@ -18,8 +18,8 @@ A Spring Boot Starter library for structured JSON logging with two main log type
 
 ```xml
 <dependency>
-    <groupId>com.jnp</groupId>
-    <artifactId>jnp-spring-logs-starter</artifactId>
+    <groupId>th.co.autox</groupId>
+    <artifactId>autox-los-logging</artifactId>
     <version>1.0.0</version>
 </dependency>
 ```
@@ -27,7 +27,7 @@ A Spring Boot Starter library for structured JSON logging with two main log type
 ### Gradle
 
 ```groovy
-implementation 'com.jnp:jnp-spring-logs-starter:1.0.0'
+implementation 'th.co.autox:autox-los-logging:1.0.0'
 ```
 
 ## Quick Start
@@ -56,7 +56,7 @@ logging:
 ### 3. Use the logger in your code
 
 ```java
-import com.jnp.logging.core.AppLogger;
+import th.co.autox.logging.core.AppLogger;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -84,8 +84,8 @@ public class MyService {
 #### Alternative: Using Factory Injection
 
 ```java
-import com.jnp.logging.core.AppLogger;
-import com.jnp.logging.core.AppLoggerFactory;
+import th.co.autox.logging.core.AppLogger;
+import th.co.autox.logging.core.AppLoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -115,7 +115,7 @@ Used for logging HTTP request/response information:
     "@version": "1",
     "application": "my-service",
     "message": "Incoming request: POST /api/users",
-    "logger_name": "com.jnp.logging.filter.RequestLoggingFilter",
+    "logger_name": "th.co.autox.logging.filter.RequestLoggingFilter",
     "thread_name": "http-nio-8080-exec-1",
     "level": "INFO",
     "level_value": 20000,
@@ -291,7 +291,7 @@ The library automatically propagates correlation IDs:
 ### Manual Correlation ID Management
 
 ```java
-import com.jnp.logging.context.CorrelationContext;
+import th.co.autox.logging.context.CorrelationContext;
 
 // Get current correlation ID
 String correlationId = CorrelationContext.getCorrelationId();
@@ -322,7 +322,7 @@ Or create a custom configuration:
     <springProperty scope="context" name="APP_NAME" source="spring.application.name"/>
 
     <appender name="JSON_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="com.jnp.logging.encoder.JnpJsonEncoder">
+        <encoder class="th.co.autox.logging.encoder.JsonLogEncoder">
             <applicationName>${APP_NAME}</applicationName>
         </encoder>
     </appender>
@@ -342,10 +342,10 @@ Or create a custom configuration:
 @RequestMapping("/api/orders")
 public class OrderController {
 
-    private final JnpLogger log;
+    private final AppLogger log;
     private final OrderService orderService;
 
-    public OrderController(JnpLoggerFactory loggerFactory, OrderService orderService) {
+    public OrderController(AppLoggerFactory loggerFactory, OrderService orderService) {
         this.log = loggerFactory.getLogger(OrderController.class);
         this.orderService = orderService;
     }
@@ -377,10 +377,10 @@ public class OrderController {
 @Service
 public class PaymentService {
 
-    private final JnpLogger log;
+    private final AppLogger log;
     private final RestTemplate restTemplate;
 
-    public PaymentService(JnpLoggerFactory loggerFactory, RestTemplate restTemplate) {
+    public PaymentService(AppLoggerFactory loggerFactory, RestTemplate restTemplate) {
         this.log = loggerFactory.getLogger(PaymentService.class);
         this.restTemplate = restTemplate;
     }
