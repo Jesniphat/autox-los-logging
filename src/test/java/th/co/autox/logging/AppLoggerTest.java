@@ -69,10 +69,15 @@ class AppLoggerTest {
 
     @Test
     void requestLogDoesNotThrow() {
-        // Test logRequest with method and uri
-        logger.logRequest("Test request", "GET", "/api/test",
-                RequestInfo.builder().headers(Map.of("Content-Type", "application/json")).build(),
-                ResponseInfo.builder().headers(Map.of("Content-Type", "application/json")).build());
+        // Test logRequest with method, uri, status code and duration
+        logger.logRequest("GET", "/api/test", 200, 100L,
+                Map.of("data", "test"),
+                Map.of("result", "success"));
+
+        // Test logRequest with message
+        logger.logRequest("Test request", "GET", "/api/test", 200, 100L,
+                Map.of("data", "test"),
+                Map.of("result", "success"));
 
         // Test incoming request with RequestInfo
         RequestInfo requestInfo = RequestInfo.builder()

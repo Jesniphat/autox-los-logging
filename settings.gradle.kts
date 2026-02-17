@@ -1,0 +1,2 @@
+rootProject.name = "autox-los-logging"
+

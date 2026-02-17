@@ -1,114 +1,112 @@
 package th.co.autox.logging.interceptor;
 
-}
-    }
-        return body;
-        }
-            return body.substring(0, maxSize) + "... [TRUNCATED]";
-        if (body.length() > maxSize) {
-        int maxSize = properties.getRequest().getMaxBodySize();
-    private String truncateBody(String body) {
+import th.co.autox.logging.config.LoggingProperties;
+import th.co.autox.logging.context.CorrelationContext;
+import th.co.autox.logging.core.AppLogger;
+import th.co.autox.logging.core.AppLoggerFactory;
+import th.co.autox.logging.model.RequestInfo;
+import th.co.autox.logging.model.ResponseInfo;
 
+import org.springframework.http.HttpRequest;
+import org.springframework.http.client.ClientHttpRequestExecution;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.util.StreamUtils;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Interceptor for logging outgoing RestTemplate HTTP requests and responses.
+ */
+public class RestTemplateLoggingInterceptor implements ClientHttpRequestInterceptor {
+
+    private final AppLogger log;
+    private final LoggingProperties properties;
+
+    public RestTemplateLoggingInterceptor(AppLoggerFactory loggerFactory, LoggingProperties properties) {
+        this.log = loggerFactory.getLogger(RestTemplateLoggingInterceptor.class);
+        this.properties = properties;
     }
+
+    @Override
+    public ClientHttpResponse intercept(HttpRequest request, byte[] body,
+                                        ClientHttpRequestExecution execution) throws IOException {
+        // Add correlation ID header
+        request.getHeaders().add(CorrelationContext.CORRELATION_ID_HEADER,
+                CorrelationContext.getCorrelationId());
+
+        if (!properties.isEnabled() || !properties.getRequest().isEnabled()) {
+            return execution.execute(request, body);
         }
-            log.error("Failed to log outgoing response", e);
-        } catch (IOException e) {
+
+        long startTime = System.currentTimeMillis();
+        String method = request.getMethod().name();
+        String uri = request.getURI().toString();
+
+        // Log outgoing request
+        logOutgoingRequest(method, uri, body);
+
+        // Execute request
+        ClientHttpResponse response = execution.execute(request, body);
+
+        // Log response
+        long duration = System.currentTimeMillis() - startTime;
+        logOutgoingResponse(method, uri, response, duration);
+
+        return response;
+    }
+
+    private void logOutgoingRequest(String method, String uri, byte[] body) {
+        RequestInfo.RequestInfoBuilder requestInfoBuilder = RequestInfo.builder();
+
+        if (properties.getRequest().isLogBody() && body != null && body.length > 0) {
+            String bodyStr = new String(body, StandardCharsets.UTF_8);
+            requestInfoBuilder.body(truncateBody(bodyStr));
+            requestInfoBuilder.contentLength((long) body.length);
+        }
+
+        log.logOutgoingRequest(method, uri, requestInfoBuilder.build());
+    }
+
+    private void logOutgoingResponse(String method, String uri, ClientHttpResponse response, long duration) {
+        try {
+            int statusCode = response.getStatusCode().value();
+
+            ResponseInfo.ResponseInfoBuilder responseInfoBuilder = ResponseInfo.builder();
+            responseInfoBuilder.contentType(response.getHeaders().getContentType() != null
+                    ? response.getHeaders().getContentType().toString() : null);
+
+            if (properties.getRequest().isLogHeaders()) {
+                Map<String, String> headers = new HashMap<>();
+                response.getHeaders().forEach((name, values) ->
+                        headers.put(name, String.join(", ", values)));
+                responseInfoBuilder.headers(headers);
+            }
+
+            if (properties.getRequest().isLogResponseBody()) {
+                String bodyStr = StreamUtils.copyToString(response.getBody(), StandardCharsets.UTF_8);
+                if (!bodyStr.isEmpty()) {
+                    responseInfoBuilder.body(truncateBody(bodyStr));
+                    responseInfoBuilder.contentLength((long) bodyStr.length());
+                }
+            }
 
             log.logOutgoingResponse(method, uri, statusCode, duration, responseInfoBuilder.build());
 
-            }
-                }
-                    responseInfoBuilder.contentLength((long) bodyStr.length());
-                    responseInfoBuilder.body(truncateBody(bodyStr));
-                if (!bodyStr.isEmpty()) {
-                String bodyStr = StreamUtils.copyToString(response.getBody(), StandardCharsets.UTF_8);
-            if (properties.getRequest().isLogResponseBody()) {
-
-            }
-                responseInfoBuilder.headers(headers);
-                        headers.put(name, String.join(", ", values)));
-                response.getHeaders().forEach((name, values) ->
-                Map<String, String> headers = new HashMap<>();
-            if (properties.getRequest().isLogHeaders()) {
-
-                    ? response.getHeaders().getContentType().toString() : null);
-            responseInfoBuilder.contentType(response.getHeaders().getContentType() != null
-            ResponseInfo.ResponseInfoBuilder responseInfoBuilder = ResponseInfo.builder();
-
-            int statusCode = response.getStatusCode().value();
-        try {
-    private void logOutgoingResponse(String method, String uri, ClientHttpResponse response, long duration) {
-
-    }
-        log.logOutgoingRequest(method, uri, requestInfoBuilder.build());
-
+        } catch (IOException e) {
+            log.error("Failed to log outgoing response", e);
         }
-            requestInfoBuilder.contentLength((long) body.length);
-            requestInfoBuilder.body(truncateBody(bodyStr));
-            String bodyStr = new String(body, StandardCharsets.UTF_8);
-        if (properties.getRequest().isLogBody() && body != null && body.length > 0) {
-
-        RequestInfo.RequestInfoBuilder requestInfoBuilder = RequestInfo.builder();
-    private void logOutgoingRequest(String method, String uri, byte[] body) {
-
     }
-        return response;
 
-        logOutgoingResponse(method, uri, response, duration);
-        long duration = System.currentTimeMillis() - startTime;
-        // Log response
-
-        ClientHttpResponse response = execution.execute(request, body);
-        // Execute request
-
-        logOutgoingRequest(method, uri, body);
-        // Log outgoing request
-
-        String uri = request.getURI().toString();
-        String method = request.getMethod().name();
-        long startTime = System.currentTimeMillis();
-
+    private String truncateBody(String body) {
+        int maxSize = properties.getRequest().getMaxBodySize();
+        if (body.length() > maxSize) {
+            return body.substring(0, maxSize) + "... [TRUNCATED]";
         }
-            return execution.execute(request, body);
-        if (!properties.isEnabled() || !properties.getRequest().isEnabled()) {
-
-                CorrelationContext.getCorrelationId());
-        request.getHeaders().add(CorrelationContext.CORRELATION_ID_HEADER,
-        // Add correlation ID header
-
-                                        ClientHttpRequestExecution execution) throws IOException {
-    public ClientHttpResponse intercept(HttpRequest request, byte[] body,
-    @Override
-
+        return body;
     }
-        this.properties = properties;
-        this.log = loggerFactory.getLogger(RestTemplateLoggingInterceptor.class);
-    public RestTemplateLoggingInterceptor(AppLoggerFactory loggerFactory, LoggingProperties properties) {
-
-    private final LoggingProperties properties;
-    private final AppLogger log;
-
-public class RestTemplateLoggingInterceptor implements ClientHttpRequestInterceptor {
-@RequiredArgsConstructor
- */
- * Interceptor for logging outgoing RestTemplate HTTP requests and responses.
-/**
-
-import java.util.Map;
-import java.util.HashMap;
-import java.nio.charset.StandardCharsets;
-import java.io.IOException;
-
-import org.springframework.util.StreamUtils;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.http.client.ClientHttpRequestExecution;
-import org.springframework.http.HttpRequest;
-import lombok.RequiredArgsConstructor;
-import th.co.autox.logging.model.ResponseInfo;
-import th.co.autox.logging.model.RequestInfo;
-import th.co.autox.logging.core.AppLoggerFactory;
-import th.co.autox.logging.core.AppLogger;
-import th.co.autox.logging.context.CorrelationContext;
-import th.co.autox.logging.config.LoggingProperties;
+}
 
