@@ -1,0 +1,86 @@
+plugins {
+    id 'java'
+    id 'java-library'
+    id 'maven-publish'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'th.co.autox'
+version = '1.0.0'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+    withSourcesJar()
+    withJavadocJar()
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencyManagement {
+    imports {
+        mavenBom 'org.springframework.boot:spring-boot-dependencies:3.2.2'
+    }
+}
+
+dependencies {
+    // Spring Boot
+    api 'org.springframework.boot:spring-boot-starter'
+    api 'org.springframework.boot:spring-boot-autoconfigure'
+
+    compileOnly 'org.springframework.boot:spring-boot-starter-web'
+    compileOnly 'org.springframework.boot:spring-boot-starter-webflux'
+
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    // Logging
+    api 'ch.qos.logback:logback-classic'
+    api 'net.logstash.logback:logstash-logback-encoder:7.4'
+
+    // Jackson for JSON
+    api 'com.fasterxml.jackson.core:jackson-databind'
+    api 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Jakarta Servlet API
+    compileOnly 'jakarta.servlet:jakarta.servlet-api'
+
+    // Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-web'
+}
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+tasks.withType(Jar) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            pom {
+                name = 'AutoX LOS Logging'
+                description = 'Spring Boot Starter for structured JSON logging with request and application log types'
+            }
+        }
+    }
+
+    repositories {
+        mavenLocal()
+    }
+}
+
