@@ -310,7 +310,7 @@ Include the provided Logback configuration in your `logback-spring.xml`:
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <include resource="logback-jnp.xml"/>
+    <include resource="logback-structured.xml"/>
 </configuration>
 ```
 
