@@ -14,20 +14,72 @@ A Spring Boot Starter library for structured JSON logging with two main log type
 
 ## Installation
 
-### Maven
+### Local Development
+
+1. **Publish the library to Maven Local** (ที่โปรเจกต์ logging-libs):
+
+```bash
+./gradlew publishToMavenLocal
+```
+
+Artifact จะถูก publish ไปที่ `~/.m2/repository/th/co/autox/logging-libs/1.0.0/`
+
+2. **เพิ่ม `mavenLocal()` ใน `build.gradle` ของ microservice**:
+
+```groovy
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'th.co.autox:logging-libs:1.0.0'
+}
+```
+
+> **Note:** ทุกครั้งที่แก้โค้ดใน logging-libs ต้องรัน `./gradlew publishToMavenLocal` ใหม่
+
+### Production
+
+สำหรับ production ควรใช้ **Private Maven Repository** (เช่น JFrog Artifactory, Sonatype Nexus, GitHub Packages) แทน `mavenLocal()`
+
+1. **Publish library ไปที่ private repository** (ตั้งค่าใน CI/CD pipeline):
+
+```bash
+./gradlew publish
+```
+
+2. **เพิ่ม repository URL ใน `build.gradle` ของ microservice**:
+
+```groovy
+repositories {
+    maven { url 'https://your-company-repo.example.com/maven-releases' }
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'th.co.autox:logging-libs:1.0.0'
+}
+```
+
+> **Important:** ไม่ควรใช้ `mavenLocal()` บน production เพราะไม่มี checksum verification และทำให้ build ไม่ reproducible
+
+### Dependency Snippet Reference
+
+#### Gradle
+
+```groovy
+implementation 'th.co.autox:logging-libs:1.0.0'
+```
+
+#### Maven
 
 ```xml
 <dependency>
     <groupId>th.co.autox</groupId>
-    <artifactId>autox-los-logging</artifactId>
+    <artifactId>logging-libs</artifactId>
     <version>1.0.0</version>
 </dependency>
-```
-
-### Gradle
-
-```groovy
-implementation 'th.co.autox:autox-los-logging:1.0.0'
 ```
 
 ## Quick Start
@@ -404,10 +456,16 @@ public class PaymentService {
 
 ```bash
 # Build the library
-mvn clean install
+./gradlew clean build
 
 # Skip tests
-mvn clean install -DskipTests
+./gradlew clean build -x test
+
+# Publish to Maven Local (for local development)
+./gradlew publishToMavenLocal
+
+# Publish to remote repository (for production)
+./gradlew publish
 ```
 
 ## License
